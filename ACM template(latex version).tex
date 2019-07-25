@@ -1,0 +1,85 @@
+\documentclass[a4paper,12pt]{book}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{comment} 
+\usepackage{listings}
+\usepackage{color}
+%\pagestyle{fancy}
+%\fancyhf{}
+%\renewcommand\headrulewidth{0pt} 
+%\renewcommand\headrulewidth{0pt}
+\usepackage[utf8]{inputenc}
+\title{ACM Template}
+\author{dennis \and wuzj \and Cristinaaa}
+\date{\today}
+\begin{document}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ 
+	backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+	basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+	breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+	breaklines=true,                 % sets automatic line breaking
+	captionpos=b,                    % sets the caption-position to bottom
+	commentstyle=\color{mygreen},    % comment style
+	deletekeywords={...},            % if you want to delete keywords from the given language
+	escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+	extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+	frame=single,	                   % adds a frame around the code
+	keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+	keywordstyle=\color{blue},       % keyword style
+	language=c++,                 % the language of the code
+	morekeywords={*,...},            % if you want to add more keywords to the set
+	numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+	numbersep=10pt,                   % how far the line-numbers are from the code
+	numberstyle=\small, % the style that is used for the line-numbers
+	rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+	showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+	showstringspaces=false,          % underline spaces within strings only
+	showtabs=false,                  % show tabs within strings adding particular underscores
+	stringstyle=\color{mymauve},     % string literal style
+	tabsize=2,	                   % sets default tabsize to 2 spaces
+	title=\lstname,                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+\begin{titlepage}
+\maketitle
+\thispagestyle{empty}
+\end{titlepage}
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\thispagestyle{empty}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\chapter{Base algorithm} 
+
+\section{Bisection method}
+search for $min(b),b\in\{a[k]\geq x\}$
+\begin{lstlisting}
+while(l<r){
+	int mid = (l + r) >> 1;
+	if(a[mid] >= x) r = mid;
+	else l = mid + 1;
+}
+return a[l];
+\end{lstlisting} 
+search for $max(b),b\in\{a[k]\leq x\}$
+\begin{lstlisting}
+while(l<r){
+	int mid = (l + r + 1) >> 1;
+	if(a[mid] <= x) l = mid;
+	else r = mid - 1;
+}
+return a[l];
+\end{lstlisting} 
+\chapter{Graph Theory and Network Algorithms}
+\chapter{Algebraic Algorithms}
+\chapter{Number Theory}
+\chapter{Data structure}
+\chapter{Computational geometry}
+\chapter{Classic Problems}
+\end{document}
