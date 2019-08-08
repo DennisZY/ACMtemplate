@@ -329,6 +329,14 @@ int ISAP :: maxflow() {
 
 ## 4 Number Theory
 
+### changyongshulun
+
+$$
+(p-1)！=p-1 \pmod{p}
+$$
+
+
+
 ## 5 Data structure
 
 ## 6 Computational geometry
