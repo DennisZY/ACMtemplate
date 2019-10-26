@@ -1,0 +1,287 @@
+\section{math}
+
+\subsection{matrix tree}
+
+\begin{lstlisting}
+const int MOD = 31011;
+int n, m;
+int bel[110];
+struct edge {
+    int u, v;
+    ll w;
+    bool operator<(const edge &tmp) const { return w < tmp.w; }
+} e[1010], tr[110];
+int fa[110], use[110], is[110];
+inline int get(int x) {
+    while (x != fa[x]) x = fa[x] = fa[fa[x]];
+    return x;
+}
+inline void uni(int x, int y) { fa[get(x)] = get(y); }
+int a[110][110];
+int tot, val[110], cnt;
+void addTreeEdge(int v) {
+    for (int i = 1; i <= cnt; i++) {
+        if (tr[i].w != v) {
+            uni(tr[i].u, tr[i].v);
+        }
+    }
+}
+void add(int u, int v) { --a[u][v], --a[v][u], ++a[u][u], ++a[v][v]; }
+int getblock() {
+    int blo = 0;
+    for (int i = 1; i <= n; i++) {
+        if (!bel[get(i)]) {
+            bel[get(i)] = ++blo;
+        }
+        bel[i] = bel[get(i)];
+    }
+    return blo;
+}
+int Gauss(int n) {
+    int ans = 1;
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++)
+            if (a[i][j] < 0) a[i][j] += MOD;
+    for (int i = 1; i <= n; ++i) {
+        for (int k = i + 1; k <= n; ++k) {
+            while (a[k][i]) {
+                int d = a[i][i] / a[k][i];
+                for (int j = i; j <= n; ++j)
+                    a[i][j] = (a[i][j] - 1LL * d * a[k][j] % MOD + MOD) % MOD;
+                std::swap(a[i], a[k]), ans = -ans;
+            }
+        }
+        ans = 1LL * ans * a[i][i] % MOD, ans = (ans + MOD) % MOD;
+    }
+    return ans;
+}
+void rebuild(int v) {
+    memset(a, 0, sizeof(a));
+    for (int i = 1; i <= m; ++i)
+        if (e[i].w == v) add(bel[e[i].u], bel[e[i].v]);
+}
+int main() {
+    // freopen("in.txt","r",stdin);
+    // freopen("out.txt","w",stdout);
+    scanf("%d%d", &n, &m);
+    for (int i = 1; i <= m; i++) {
+        scanf("%d%d%lld", &e[i].u, &e[i].v, &e[i].w);
+    }
+    sort(e + 1, e + m + 1);
+    int g = n;
+    cnt = 0, tot = 0;
+    for (int i = 1; i <= n; i++) fa[i] = i;
+    for (int i = 1, fx, fy; i <= m && g > 1; i++) {
+        fx = get(e[i].u), fy = get(e[i].v);
+        if (fx != fy) {
+            fa[fx] = fy;
+            tr[++cnt] = e[i];
+            if (e[i].w != val[tot]) val[++tot] = e[i].w;
+            --g;
+        }
+    }
+    if (g > 1) {
+        puts("0");
+        return 0;
+    }
+    ll ans = 1;
+    for (int i = 1; i <= tot; i++) {
+        for (int j = 1; j <= n; j++) fa[j] = j, bel[j] = 0;
+        addTreeEdge(val[i]);
+        int blo = getblock();
+        rebuild(val[i]);
+        ans = 1LL * ans * Gauss(blo - 1) % MOD;
+    }
+    printf("%lld\n", ans);
+    return 0;
+}
+\end{lstlisting}
+
+\subsection{isap}
+\begin{lstlisting}
+
+class ISAP {
+    private:
+        static const int N = 10010;//endpoint_num
+        static const int M = 240010;//edge_num
+        static const int INF = 0x3f3f3f3f;
+        int tot,n,m,s,t;
+        int carc[N],gap[N];//curarc and gap
+        int pre[N];
+        int Head[N],nxt[M],ver[M],flow[M];//base
+        int d[N];//depth
+        bool visited[N];
+    public:
+        void init(int _n,int _m,int _s,int _t) {
+            tot=1;
+            n=_n,m=_m,s=_s,t=_t;
+            fill(Head,Head+n+1,0);
+        }
+    
+        void addedge(int u,int v,int w) {
+            ver[++tot]=v;
+            flow[tot]=w;
+            nxt[tot]=Head[u];
+            Head[u]=tot;
+    
+            ver[++tot]=u;
+            flow[tot]=0;
+            nxt[tot]=Head[v];
+            Head[v]=tot;
+        }
+        bool bfs() {// calculate the depth
+            fill(visited,visited+n+1,0);
+            queue<int>q;
+            visited[t]=1;
+            d[t]=0;
+            q.push(t);
+            while(q.size()) {
+                int u = q.front();
+                q.pop();
+                for(int i = Head[u]; i; i=nxt[i]) {
+                    int v = ver[i];
+                    if(i&1&&!visited[v]) {
+                        visited[v]=true;
+                        d[v]=d[u]+1;
+                        q.push(v);
+                        //printf("!!!!!!!d[%d]=%d  d[%d]=%d\n",u,d[u],v,d[v]);
+                    }
+                }
+            }
+            return visited[s];
+        }
+        int aug() {
+            int u=t, df=INF;
+            while(u!=s) {// calculate the flow
+                df=min(df,flow[pre[u]]);
+                u=ver[pre[u] ^ 1];
+            }
+            u=t;
+            while(u!=s) {
+                flow[pre[u]]-=df;
+                flow[pre[u] ^ 1]+=df;
+                u=ver[pre[u] ^ 1];
+            }
+            return df;
+        }
+        int maxflow();
+} flow;
+int ISAP :: maxflow() {
+    int ans=0;
+    fill(gap,gap+n+1,0);
+    for(int i=1; i<=n; i++) carc[i]=Head[i];//copy the head for ignore the useless edge
+    bfs();
+    for(int i=1; i<=n; i++)gap[d[i]]++;//Using array gap to store how many endpoint's depth is k. When we found some gap is 0 or d[source]>n mean there are no another augmenting path.
+    int u = s;
+    while(d[s]<=n) {
+        if(u==t) {
+            ans+=aug();
+            u=s;
+        }
+        bool advanced=false;
+        for(int i=carc[u]; i; i=nxt[i]) {
+            if(flow[i] && d[u]==d[ver[i]]+1) {
+                advanced=true;
+                pre[ver[i]]=i;
+                carc[u]=i;//carc
+                u=ver[i];
+                break;
+            }
+        }
+        if(!advanced) {
+            int mindep=n-1;
+            for(int i=Head[u]; i; i=nxt[i]) {
+                if(flow[i]) {
+                    mindep=min(mindep,d[ver[i]]);
+                }
+            }
+            //if(d[s]>n)puts("d[s]>n cause exit");
+            if(--gap[d[u]]==0)break;
+            gap[d[u]=mindep+1]++;
+
+            carc[u]=Head[u];
+            if(u!=s)u=ver[pre[u] ^ 1];
+        }
+        // if(d[s]>n)puts("d[s]>n cause exit");
+    }
+    return ans;
+}
+
+\end{lstlisting}
+
+\subsection{dinic}
+
+\begin{lstlisting}
+class dinic {
+    private:
+        static const int N = 10010;//TODO :endpoint_num
+        static const int M = 200010;//edge_num
+        static const int INF = 0x3f3f3f3f;
+        int tot,n,m,s,t;
+        int carc[N];//curarc and gap
+        int Head[N],nxt[M],ver[M],flow[M];//base
+        int d[N];//depth
+    public:
+        void init(int _n,int _m,int _s,int _t) {
+            tot=1;
+            n=_n,m=_m,s=_s,t=_t;
+            fill(Head,Head+n+1,0);
+        }
+        void addedge(int u,int v,int w) {
+            ver[++tot]=v;
+            flow[tot]=w;
+            nxt[tot]=Head[u];
+            Head[u]=tot;
+    
+            ver[++tot]=u;
+            flow[tot]=0;
+            nxt[tot]=Head[v];
+            Head[v]=tot;
+        }
+        bool bfs() {
+            fill(d,d+n+1,0);
+            queue<int>q;
+            d[s]=1;
+            q.push(s);
+            while(q.size()) {
+                int u = q.front();
+                q.pop();
+                for(int i = Head[u]; i; i=nxt[i]) {
+                    int v = ver[i];
+                    if(d[v]==0&&flow[i]) {
+                        d[v]=d[u]+1;
+                        q.push(v);
+                    }
+                }
+            }
+            return d[t]!=0;
+        }
+        int dfs(int u,int minn);
+        int maxflow() {
+            int ans=0;
+            while(bfs()) {
+                copy(Head+1,Head+n+1,carc+1);
+                ans+=dfs(s,INF);
+            }
+            return ans;
+        }
+} flow;
+int dinic::dfs(int u,int minn) {
+    if(u==t)return minn;
+    int ret=0;
+    for(int i = carc[u]; minn&&i; i=nxt[i]) {
+        carc[u]=i;
+        int v = ver[i];
+        if(flow[i]&&d[v]==d[u]+1) {
+            int final=dfs(v,min(flow[i],minn));
+            if(final>0) {
+                flow[i]-=final;
+                flow[i ^ 1]+=final;
+                minn-=final;
+                ret+=final;
+            } else d[v]=-1;
+        }
+    }
+    return ret;
+}
+\end{lstlisting}

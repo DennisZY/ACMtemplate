@@ -191,39 +191,7 @@ class ISAP {
 		flow[tot]=0;
 		nxt[tot]=Head[v];
 		Head[v]=tot;
-	}
-	bool bfs() {// calculate the depth
-		fill(visited,visited+n+1,0);
-		queue<int>q;
-		visited[t]=1;class ISAP {
-	static const int N = 10010;//endpoint_num
-	static const int M = 240010;//edge_num
-	static const int INF = 0x3f3f3f3f;
-	int tot,n,m,s,t;
-	int carc[N],gap[N];//curarc and gap
-	int pre[N];
-	int Head[N],nxt[M],ver[M],flow[M];//base
-	int d[N];//depth
-	int visit[N];
-	bool visited[N];
-  public:
-	void init(int _n,int _m,int _s,int _t) {
-		tot=1;
-		n=_n,m=_m,s=_s,t=_t;
-		fill(Head,Head+n+1,0);
-		fill(visit,visit+n+1,0);
-	}
-	void addedge(int u,int v,int w) {
-		ver[++tot]=v;
-		flow[tot]=w;
-		nxt[tot]=Head[u];
-		Head[u]=tot;
-
-		ver[++tot]=u;
-		flow[tot]=0;
-		nxt[tot]=Head[v];
-		Head[v]=tot;
-	}
+	}	ret
 	bool bfs() {// calculate the depth
 		fill(visited,visited+n+1,0);
 		queue<int>q;

@@ -1,0 +1,150 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[dvips]{graphicx}
+\usepackage{subfig}
+\usepackage{mathpazo}
+\usepackage{xeCJK}
+\usepackage{pstricks,pst-node,pst-tree}
+
+%\setsansfont{Inconsolata}
+%\setsansfont{DejaVu Sans Mono}
+\setsansfont{Source Code Pro}
+%\setsansfont{Monaco}
+%\setsansfont{Fira Code}
+
+\setCJKmainfont{Noto Sans CJK SC}
+\setCJKsansfont{Noto Sans CJK SC}
+\setCJKmonofont{Noto Sans CJK SC}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{type1cm}
+\usepackage{booktabs}
+\usepackage{geometry}
+%\usepackage[landscape]{geometry}
+\geometry{left=3cm,right=1cm,top=1.5cm,bottom=2cm,headsep=0.2cm}
+
+\usepackage{courier}
+%\usepackage{time}
+%\usepackage{charter}
+
+\usepackage{fancyhdr}
+
+\usepackage{listings}
+
+\usepackage{lstfiracode}
+\usepackage{fontspec}
+\setmonofont{Fira Code}[
+	Contextuals=Alternate  % Activate the calt feature
+]
+\lstset{
+    breaklines=true,
+    style=FiraCodeStyle,
+    basicstyle=\ttfamily,
+    tabsize=4,
+    numberstyle=\sf\normalsize,
+    commentstyle=\sf\normalsize,
+    numbers=left,
+    %keywordstyle=\color{blue!70},
+    frame=leftline,
+    %rulesepcolor=\color{red!20!green!20!blue!20},
+    escapeinside=``,
+    extendedchars=false
+}
+\usepackage[CJKbookmarks=true,
+			colorlinks,
+            linkcolor=black,
+            anchorcolor=black,
+            citecolor=black]{hyperref}
+\AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
+
+\usepackage{indentfirst}
+\setlength{\parindent}{0em}
+
+\begin{document}
+    \pagestyle{fancy}
+    \lhead{}
+    \chead{}
+    \rhead{\bfseries ACM Template of Brute Force Fairy}
+    \lfoot{\bfseries Brute Force Fairy}
+    \cfoot{}
+    \rfoot{\bfseries\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+
+    \newgeometry{left=1cm,right=1cm,top=1.5cm,bottom=1.5cm}
+    \begin{titlepage}
+	~
+	%\clearpage
+	\pagestyle{empty}
+	
+        \begin{center}
+        ~\\[150pt]
+
+        \hrule\ \\[8pt]
+        \fontsize{40pt}{\baselineskip}\selectfont  \textsc{code standard library}\\[8pt]
+        \hrule\ \\[140pt]
+
+        ~\\
+        ~\\
+        ~\\
+        ~\\
+
+        \Large Last build at \today
+        \end{center}
+    \clearpage
+    \phantom{s}
+    \clearpage
+    \end{titlepage}
+
+
+    \restoregeometry
+
+
+
+    \tableofcontents
+    \clearpage
+
+    %\input todolist.tex
+    %\clearpage
+
+    %\input notice.tex
+    %\clearpage
+
+    \input string.tex
+    \clearpage
+
+    \input math.tex
+    \clearpage
+
+    %\input datastructure.tex
+    %\clearpage
+
+    \input graph.tex
+    \clearpage
+
+    %\input search.tex
+    %\clearpage
+
+    %\input dp.tex
+    %\clearpage
+
+    %\input geometric.tex
+    %\clearpage
+
+    %\input others.tex
+    %\clearpage
+
+    \input miss.tex
+	\clearpage
+
+    %\input search.tex
+    %\clearpage
+
+    %\input dp.tex
+    %\clearpage
+
+    %\input others.tex
+    %\clearpage
+
+\end{document}

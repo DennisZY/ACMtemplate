@@ -1,0 +1,193 @@
+\section{string}
+
+\subsection{Manacher}
+\begin{lstlisting}
+vector<int> d1(n);
+for (int i = 0, l = 0, r = -1; i < n; i++) {
+	int k = (i > r) ? 1 : min(d1[l + r - i], r - i);
+	while (0 <= i - k && i + k < n && s[i - k] == s[i + k]) {
+	k++;
+}
+	d1[i] = k--;
+	if (i + k > r) {
+		l = i - k;
+		r = i + k;
+	}
+}
+\end{lstlisting}
+
+\subsection{Minimum representation}
+\begin{lstlisting}
+int k = 0, i = 0, j = 1;
+while (k < n && i < n && j < n) {
+	if (sec[(i + k) % n] == sec[(j + k) % n]) {
+		k++;
+	} else {
+		sec[(i + k) % n] > sec[(j + k) % n] ? i = i + k + 1 : j = j + k + 1;
+		if (i == j) i++;
+		k = 0;
+	}
+}
+i = min(i, j);
+\end{lstlisting}
+
+\subsection{AC automation}
+\begin{lstlisting}
+const int N = 156, L = 1e6 + 6;
+namespace AC {
+const int SZ = N * 80;
+int tot, tr[SZ][26];
+int fail[SZ], idx[SZ], val[SZ];
+int cnt[N];  // 记录第 i 个字符串的出现次数
+void init() {
+	memset(fail, 0, sizeof(fail));
+	memset(tr, 0, sizeof(tr));
+	memset(val, 0, sizeof(val));
+	memset(cnt, 0, sizeof(cnt));
+	memset(idx, 0, sizeof(idx));
+	tot = 0;
+}
+void insert(char *s, int id) {  // id 表示原始字符串的编号
+	int u = 0;
+	for (int i = 1; s[i]; i++) {
+		if (!tr[u][s[i] - 'a']) tr[u][s[i] - 'a'] = ++tot;
+		u = tr[u][s[i] - 'a'];
+	}
+	idx[u] = id;
+}
+queue<int> q;
+void build() {
+	for (int i = 0; i < 26; i++)
+		if (tr[0][i]) q.push(tr[0][i]);
+	while (q.size()) {
+		int u = q.front();
+		q.pop();
+		for (int i = 0; i < 26; i++) {
+		if (tr[u][i])
+			fail[tr[u][i]] = tr[fail[u]][i], q.push(tr[u][i]);
+		else
+			tr[u][i] = tr[fail[u]][i];
+		}
+	}
+}
+int query(char *t) {  // 返回最大的出现次数
+	int u = 0, res = 0;
+	for (int i = 1; t[i]; i++) {
+		u = tr[u][t[i] - 'a'];
+		for (int j = u; j; j = fail[j]) val[j]++;
+	}
+	for (int i = 0; i <= tot; i++)
+		if (idx[i]) res = max(res, val[i]), cnt[idx[i]] = val[i];
+	return res;
+	}
+}  // namespace AC
+\end{lstlisting}
+
+\subsection{suffix automation}
+\begin{lstlisting}
+const int N = 2000010;
+const int CHAR_SET_SIZE=26;
+int c[N],dfn[N<<1];
+struct SAM{
+    int ch[N<<1][CHAR_SET_SIZE],fa[N<<1],len[N<<1],siz[N<<1];
+    int tot,last;
+    int newnode(){
+        ++tot;
+        memset(ch[tot],0,sizeof ch[tot]);
+        fa[tot]=0;
+        return tot;
+    }
+    void init(){
+        tot=1;
+        last=1;
+        len[1]=0;
+        memset(ch[1],0,sizeof ch[1]);
+        memset(siz,0,sizeof siz);
+    }
+    void add(int x){
+        int pos = last,newpos=newnode();
+        last = newpos;
+        siz[newpos]=1;
+        len[newpos]=len[pos]+1;
+        while(pos&&!ch[pos][x]){ch[pos][x]=newpos;pos=fa[pos];}
+        if(!pos)fa[newpos]=1;
+        else{
+            int oldpos=ch[pos][x];
+            if(len[oldpos]==len[pos]+1)fa[newpos]=oldpos;
+            else{
+                int anp=newnode();
+                memcpy(ch[anp],ch[oldpos],sizeof ch[anp]);
+                fa[anp]=fa[oldpos];
+                len[anp]=len[pos]+1;
+                fa[oldpos]=fa[newpos]=anp;
+                while(pos&&ch[pos][x]==oldpos){
+                    ch[pos][x]=anp;
+                    pos=fa[pos];
+                }
+            }
+        }   
+    }
+    long long solve(){
+        long long ans=0;
+        memset(c,0,sizeof c);
+        for(int i=1;i<=tot;i++){c[len[i]]++;}
+        for(int i=1;i<=tot;i++)c[i]+=c[i-1];
+        for(int i=1;i<=tot;i++)dfn[c[len[i]]--]=i;
+        for(int i=tot;i>=1;--i){
+            int now = dfn[i];
+            siz[fa[now]]+=siz[now];
+            if(siz[now]>1)ans=max(ans,1ll*len[now]*siz[now]);
+        }    
+        return ans;
+    }
+}sam;
+\end{lstlisting}
+
+\subsection{PAM}
+\begin{lstlisting}
+class PA {
+	private:
+		static const int N = 100010;
+		struct Node {
+			int len;
+			int ptr[26], fail;
+			Node(int len = 0) : len(len), fail(0) { memset(ptr, 0, sizeof(ptr)); }
+		} nd[N];
+	
+		int size, cnt;  // size为字符串长度，cnt为节点个数
+		int cur;  //当前指针停留的位置，即最后插入字符所对应的节点
+		char s[N];
+	
+		int getfail(int x)  //沿着fail指针找到第一个回文后缀
+		{
+		while (s[size - nd[x].len - 1] != s[size]) {
+			x = nd[x].fail;
+		}
+		return x;
+		}
+	
+	public:
+		PA() : size(0), cnt(0), cur(0) {
+			nd[cnt] = Node(0);
+			nd[cnt].fail = 1;
+			nd[++cnt] = Node(-1);
+			nd[cnt].fail = 0;
+			s[0] = '$';
+		}
+	
+		void extend(char c) {
+			s[++size] = c;
+			int now = getfail(cur);  //找到插入的位置
+			if (!nd[now].ptr[c - 'a'])  //若没有这个节点，则新建并求出它的fail指针
+			{
+				int tmp = ++cnt;
+				nd[tmp] = Node(nd[now].len + 2);
+				nd[tmp].fail = nd[getfail(nd[now].fail)].ptr[c - 'a'];
+				nd[now].ptr[c - 'a'] = tmp;
+			}
+			cur = nd[now].ptr[c - 'a'];
+		}
+	
+		int qlen() { return nd[cur].len; }
+} A, B;
+\end{lstlisting}
